@@ -1,0 +1,463 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EPIC STORE - Online Shopping</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f5f7;
+  color: #222;
+}
+
+header {
+  background: #101828;
+  color: white;
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.logo span {
+  color: #ff7020;
+}
+
+.search {
+  display: flex;
+  flex: 1;
+  max-width: 450px;
+}
+
+.search input {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px 0 0 6px;
+}
+
+.search button {
+  border: none;
+  padding: 12px;
+  background: #ff7020;
+  color: white;
+  cursor: pointer;
+}
+
+.cart-btn {
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.hero {
+  margin: 25px auto;
+  width: 90%;
+  padding: 35px;
+  border-radius: 14px;
+  color: white;
+  background: linear-gradient(120deg, #101828, #344b70);
+}
+
+.hero h1 {
+  font-size: 35px;
+}
+
+.hero p {
+  line-height: 1.7;
+}
+
+.hero a {
+  display: inline-block;
+  padding: 12px 18px;
+  background: #ff7020;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+main {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 25px 0;
+}
+
+select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 12px #00000010;
+}
+
+.photo {
+  height: 160px;
+  background: #e9edf2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 65px;
+}
+
+.card-content {
+  padding: 13px;
+}
+
+.card h3 {
+  font-size: 16px;
+}
+
+.price {
+  color: #e85d04;
+  font-weight: bold;
+  font-size: 19px;
+}
+
+.add {
+  width: 100%;
+  padding: 10px;
+  background: #101828;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.add:hover {
+  background: #ff7020;
+}
+
+#cart {
+  position: fixed;
+  right: 15px;
+  bottom: 15px;
+  background: white;
+  width: 320px;
+  max-width: calc(100% - 30px);
+  max-height: 70vh;
+  overflow: auto;
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 5px 30px #0003;
+  display: none;
+}
+
+#cart.show {
+  display: block;
+}
+
+.cart-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.checkout {
+  width: 100%;
+  background: #16803c;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  background: #101828;
+  color: white;
+}
+
+@media (max-width: 850px) {
+  .products {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .products {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .hero h1 {
+    font-size: 26px;
+  }
+
+  .photo {
+    height: 125px;
+    font-size: 48px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">EPIC <span>STORE</span></div>
+
+  <form class="search" id="searchForm">
+    <input id="search" placeholder="প্রোডাক্ট খুঁজুন...">
+    <button type="submit">Search</button>
+  </form>
+
+  <button class="cart-btn" onclick="toggleCart()">
+    🛒 Cart (<span id="count">0</span>)
+  </button>
+</header>
+
+<section class="hero">
+  <h1>Welcome to EPIC STORE</h1>
+  <p>তোমার পছন্দের প্রোডাক্ট কিনো সহজেই।</p>
+  <a href="#shop">Shop Now</a>
+</section>
+
+<main id="shop">
+  <div class="toolbar">
+    <h2>Our Products (<span id="totalProducts">100</span>)</h2>
+
+    <select id="category" onchange="renderProducts()">
+      <option value="সব">সব ক্যাটাগরি</option>
+      <option value="টি-শার্ট">T-Shirt</option>
+      <option value="শার্ট">Shirt</option>
+      <option value="প্যান্ট">Pants</option>
+      <option value="জুতা">Shoes</option>
+      <option value="অ্যাক্সেসরিজ">Accessories</option>
+      <option value="ইলেকট্রনিক্স">Electronics</option>
+      <option value="হোম">Home</option>
+      <option value="বিউটি">Beauty</option>
+    </select>
+  </div>
+
+  <div class="products" id="products"></div>
+</main>
+
+<div id="cart">
+  <h3>তোমার কার্ট</h3>
+  <button onclick="toggleCart()">বন্ধ ✖</button>
+  <div id="cartItems"></div>
+  <h3>মোট: ৳<span id="total">0</span></h3>
+  <button class="checkout" onclick="checkout()">
+    WhatsApp-এ অর্ডার করো
+  </button>
+</div>
+
+<footer>
+  <p>© 2026 EPIC STORE | All Rights Reserved</p>
+</footer>
+
+<script>
+const products = [];
+const names = [
+  "Classic T-Shirt", "Black T-Shirt", "White T-Shirt",
+  "Graphic T-Shirt", "Oversized T-Shirt", "Polo T-Shirt",
+  "Summer T-Shirt", "Premium T-Shirt", "Printed T-Shirt",
+  "Sports T-Shirt", "Casual Shirt", "Formal Shirt",
+  "White Shirt", "Black Shirt", "Denim Shirt",
+  "Linen Shirt", "Checked Shirt", "Party Shirt",
+  "Slim Fit Shirt", "Cotton Shirt", "Blue Jeans",
+  "Black Jeans", "Cargo Pants", "Jogger Pants",
+  "Formal Pants", "Cotton Shorts", "Denim Shorts",
+  "Track Pants", "Chino Pants", "Casual Pants",
+  "Sneakers", "Running Shoes", "Canvas Shoes",
+  "Formal Shoes", "Loafers", "Sports Shoes",
+  "Sandals", "Slides", "High Top Shoes",
+  "Casual Sneakers", "Backpack", "Wallet",
+  "Leather Belt", "Baseball Cap", "Wrist Watch",
+  "Sunglasses", "Socks", "Crossbody Bag",
+  "Travel Bag", "Card Holder", "Earbuds",
+  "Bluetooth Speaker", "Phone Charger", "USB Cable",
+  "Power Bank", "Phone Stand", "Wireless Mouse",
+  "Keyboard", "LED Lamp", "Smart Watch",
+  "Water Bottle", "Coffee Mug", "Travel Mug",
+  "Wall Clock", "Desk Organizer", "Cushion",
+  "Plant Pot", "Shopping Bag", "Storage Basket",
+  "Bedside Organizer", "Face Wash", "Moisturizer",
+  "Sunscreen", "Lip Balm", "Body Lotion",
+  "Shampoo", "Hair Wax", "Comb Set",
+  "Perfume", "Makeup Pouch", "Hoodie",
+  "Jacket", "Panjabi", "Denim Jacket",
+  "Rain Jacket", "Tote Bag", "Gym Gloves",
+  "Yoga Mat", "Football", "Badminton Racket",
+  "Notebook", "Pen Set", "Laptop Sleeve",
+  "Phone Case", "Screen Protector", "Mini Tripod",
+  "Ring Light", "Travel Pouch", "Gift Box",
+  "Premium Gift Card"
+];
+
+const categories = [
+  "টি-শার্ট", "শার্ট", "প্যান্ট", "জুতা",
+  "অ্যাক্সেসরিজ", "ইলেকট্রনিক্স", "হোম", "বিউটি"
+];
+
+const icons = ["👕", "👔", "👖", "👟", "🎒", "🎧", "🏠", "🧴"];
+
+names.forEach((name, i) => {
+  products.push({
+    id: i + 1,
+    name: name,
+    category: categories[Math.min(
+      Math.floor(i / 10), categories.length - 1
+    )],
+    price: 250 + ((i * 137) % 1800),
+    icon: icons[Math.min(
+      Math.floor(i / 10), icons.length - 1
+    )]
+  });
+});
+
+const cart = {};
+
+function renderProducts() {
+  const query = document.getElementById("search")
+    .value.toLowerCase();
+
+  const category = document.getElementById("category").value;
+
+  const filtered = products.filter(p =>
+    p.name.toLowerCase().includes(query) &&
+    (category === "সব" || p.category === category)
+  );
+
+  document.getElementById("totalProducts").textContent =
+    filtered.length;
+
+  document.getElementById("products").innerHTML =
+    filtered.map(p => `
+      <div class="card">
+        <div class="photo">${p.icon}</div>
+        <div class="card-content">
+          <small>${p.category}</small>
+          <h3>${p.name}</h3>
+          <p class="price">৳${p.price}</p>
+          <button class="add" onclick="addToCart(${p.id})">
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    `).join("") || "<p>কোনো প্রোডাক্ট পাওয়া যায়নি।</p>";
+}
+
+function addToCart(id) {
+  cart[id] = (cart[id] || 0) + 1;
+  renderCart();
+  document.getElementById("cart").classList.add("show");
+}
+
+function renderCart() {
+  let total = 0;
+  let count = 0;
+
+  document.getElementById("cartItems").innerHTML =
+    Object.keys(cart).map(id => {
+      const p = products.find(x => x.id === Number(id));
+      const qty = cart[id];
+      total += p.price * qty;
+      count += qty;
+
+      return `
+        <div class="cart-item">
+          ${p.name} × ${qty}
+          — ৳${p.price * qty}
+          <button onclick="removeItem(${id})">✖</button>
+        </div>
+      `;
+    }).join("") || "<p>কার্ট খালি।</p>";
+
+  document.getElementById("total").textContent = total;
+  document.getElementById("count").textContent = count;
+}
+
+function removeItem(id) {
+  delete cart[id];
+  renderCart();
+}
+
+function toggleCart() {
+  document.getElementById("cart").classList.toggle("show");
+}
+
+function checkout() {
+  if (Object.keys(cart).length === 0) {
+    alert("প্রথমে কার্টে প্রোডাক্ট যোগ করো!");
+    return;
+  }
+
+  // এখানে নিজের WhatsApp নম্বর বসাও
+  const phone = "01780499032";
+
+  if (phone.includes("X")) {
+    alert("কোডে নিজের WhatsApp নম্বর বসাও।");
+    return;
+  }
+
+  let message = "আসসালামু আলাইকুম, আমি অর্ডার করতে চাই:\n";
+  let total = 0;
+
+  Object.keys(cart).forEach(id => {
+    const p = products.find(x => x.id === Number(id));
+    message += `${p.name} x ${cart[id]} = ৳${p.price * cart[id]}\n`;
+    total += p.price * cart[id];
+  });
+
+  message += `মোট মূল্য: ৳${total}`;
+
+  window.open(
+    "https://wa.me/" + phone +
+    "?text=" + encodeURIComponent(message),
+    "_blank"
+  );
+}
+
+document.getElementById("searchForm")
+  .addEventListener("submit", function(e) {
+    e.preventDefault();
+    renderProducts();
+  });
+
+document.getElementById("search")
+  .addEventListener("input", renderProducts);
+
+renderProducts();
+renderCart();
+</script>
+
+</body>
+</html>
